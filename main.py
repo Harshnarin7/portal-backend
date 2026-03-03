@@ -24,8 +24,8 @@ app.include_router(enrollment.router)
 # ----------------------------
 origins = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
-    "https://your-app-name.netlify.app"
+    "http://127.0.0.1:3000",
+    "https://portal-trial.netlify.app"
 ]
 SITE_NURSES = {
     "PGIMER": [
@@ -61,7 +61,7 @@ SITE_NURSES = {
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # frontend URL(s)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
