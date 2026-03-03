@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from config import SECRET_KEY, ALGORITHM
 
 
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
