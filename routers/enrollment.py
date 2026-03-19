@@ -39,3 +39,13 @@ def get_enrollment_status(enrollment_id: str, db: Session = Depends(get_db)):
         "formC": form_c is not None,
         "formD": form_d is not None,
     }
+@router.get("/screenings/{screening_id}")
+def get_screening(screening_id: str, db: Session = Depends(get_db)):
+    screening = db.query(Screening).filter(
+        Screening.screening_id == screening_id
+    ).first()
+
+    if not screening:
+        raise HTTPException(status_code=404, detail="Screening not found")
+
+    return screening
