@@ -42,7 +42,7 @@ def get_enrollment_status(enrollment_id: str, db: Session = Depends(get_db)):
 @router.get("/screenings/{screening_id}")
 def get_screening(screening_id: str, db: Session = Depends(get_db)):
     screening = db.query(Screening).filter(
-        Screening.screening_id == screening_id
+        Screening.screening_id == screening_id   # ✅ THIS IS CORRECT
     ).first()
 
     if not screening:

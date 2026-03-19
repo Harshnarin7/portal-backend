@@ -173,6 +173,17 @@ def create_screening(screening: ScreeningCreate, db: Session = Depends(get_db)):
         print("🔥 SCREENING ERROR:", e)
         
         raise HTTPException(status_code=400, detail=f"Unexpected error: {str(e)}")
+    
+@app.get("/screenings/{screening_id}", response_model=ScreeningOut)
+def get_screening(screening_id: str, db: Session = Depends(get_db)):
+    entry = db.query(Screening).filter(
+        Screening.screening_id == screening_id
+    ).first()
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="Screening not found")
+
+    return entry    
 
 # ----------------------------
 # UPDATE screening
