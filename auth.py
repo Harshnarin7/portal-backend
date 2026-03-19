@@ -1,15 +1,10 @@
 from passlib.context import CryptContext
-from fastapi import HTTPException
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    if len(password) > 72:
-        raise HTTPException(
-            status_code=400,
-            detail="Password too long (max 72 characters)"
-        )
+    password = password[:72]   # 🔥 THIS LINE IS MANDATORY
     return pwd_context.hash(password)
 
 
