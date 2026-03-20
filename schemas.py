@@ -63,6 +63,9 @@ class ScreeningCreate(BaseModel):
     exclusion_reasons: Optional[str] = None
     screening_status: Optional[str] = None
     consent_given: Optional[str] = None
+    consent_taken_by: Optional[str] = None
+    relationship_to_participant: Optional[str] = None
+    relationship_other: Optional[str] = None
     reason_not_approached: Optional[str] = None
 
 
