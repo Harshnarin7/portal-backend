@@ -166,6 +166,9 @@ def create_screening(screening: ScreeningCreate, db: Session = Depends(get_db)):
     exclusion_reasons=screening.exclusion_reasons,
 
     consent_given=screening.consent_given,
+    consent_taken_by=screening.consent_taken_by,
+    relationship_to_participant=screening.relationship_to_participant,
+    relationship_other=screening.relationship_other,
     reason_not_approached=screening.reason_not_approached,
 )
         db.add(db_screening)
