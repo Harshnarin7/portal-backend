@@ -85,6 +85,9 @@ class Screening(Base):
 
     final_decision = Column(String)
     consent_given = Column(String)
+    consent_taken_by = Column(String)
+    relationship_to_participant = Column(String)
+    relationship_other = Column(String)
     reason_not_approached = Column(String)
 
     screening_datetime = Column(DateTime, default=datetime.utcnow)
