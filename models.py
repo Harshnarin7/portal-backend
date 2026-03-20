@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 # ----------------------------
 # Database setup
 # ----------------------------
-DATABASE_URL = "sqlite:///./portal_trial.db"
+DATABASE_URL = "sqlite:///./portal_trial_v2.db"
 
 engine = create_engine(
     DATABASE_URL,
