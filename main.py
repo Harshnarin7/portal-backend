@@ -14,25 +14,7 @@ from routers import enrollment
 from models import engine
 from sqlalchemy import text
 
-# 🔥 TEMP MIGRATION (RUNS ON STARTUP)
-with engine.connect() as conn:
-    try:
-        conn.execute(text("ALTER TABLE screenings ADD COLUMN consent_taken_by TEXT"))
-        print("✅ consent_taken_by added")
-    except Exception as e:
-        print("⚠️ consent_taken_by exists")
 
-    try:
-        conn.execute(text("ALTER TABLE screenings ADD COLUMN relationship_to_participant TEXT"))
-        print("✅ relationship_to_participant added")
-    except Exception:
-        print("⚠️ relationship_to_participant exists")
-
-    try:
-        conn.execute(text("ALTER TABLE screenings ADD COLUMN relationship_other TEXT"))
-        print("✅ relationship_other added")
-    except Exception:
-        print("⚠️ relationship_other exists")
 # ----------------------------
 # Database initialization
 # ----------------------------
