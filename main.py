@@ -82,6 +82,38 @@ def generate_screening_id(site_id: str):
     return f"{site_id}-{timestamp}-{random_suffix}"
 
 
+
+@app.post("/import-from-firebase/")
+def import_from_firebase(data: dict, db: Session = Depends(get_db)):
+
+    # 🔥 use SAME screening_id from mobile
+    screening_id = data.get("screening_id")
+
+    existing = db.query(Screening).filter(
+        Screening.screening_id == screening_id
+    ).first()
+
+    if existing:
+        return {"message": "Already exists"}
+
+    new_entry = Screening(
+        screening_id=screening_id,
+        enrollment_id=data.get("enrollment_id"),
+        mother_first_name=data.get("mother_first_name"),
+        maternal_uid=data.get("maternal_uid"),
+        site_id=data.get("site_id"),
+        site_name=data.get("site_name"),
+        screening_datetime=datetime.now(),
+        created_at=datetime.now(),
+        screening_status="Pending"
+    )
+
+    db.add(new_entry)
+    db.commit()
+
+    return {"message": "Imported successfully"}
+
+
 # ----------------------------
 # ROOT endpoint
 # ----------------------------
@@ -134,7 +166,7 @@ def compute_screening_status(data):
 @app.post("/screenings/", response_model=ScreeningOut)
 def create_screening(screening: ScreeningCreate, db: Session = Depends(get_db)):
     try:
-        screening_id = generate_screening_id(screening.site_id)
+        screening_id = screening.screening_id or generate_screening_id(screening.site_id)
         enrollment_id = screening.enrollment_id
         # ---------- Eligibility calculation ----------
         status = compute_screening_status(screening)
