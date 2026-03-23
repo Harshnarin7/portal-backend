@@ -152,6 +152,17 @@ def get_site_screeners(site_name: str):
         return []
     return nurses
 
+
+@app.get("/screenings/by-screening-id/{screening_id}")
+def get_by_screening_id(screening_id: str, db: Session = Depends(get_db)):
+    data = db.query(Screening).filter(
+        Screening.screening_id == screening_id
+    ).first()
+
+    if not data:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    return data
 # ----------------------------
 # GET all screenings
 # ----------------------------
