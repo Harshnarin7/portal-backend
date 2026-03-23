@@ -133,7 +133,7 @@ def get_site_screeners(site_name: str):
 @app.get("/screenings/", response_model=list[ScreeningOut])
 def get_screenings(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    
 ):
     return db.query(Screening).order_by(Screening.created_at.desc()).all()
 
