@@ -69,16 +69,44 @@ class ScreeningCreate(BaseModel):
     reason_not_approached: Optional[str] = None
 
 
-class ScreeningOut(ScreeningCreate):
+class ScreeningOut(BaseModel):
     id: int
     screening_id: str
+
     enrollment_id: Optional[str] = None
-    screening_datetime: Optional[datetime]
-    created_at: Optional[datetime]
+    site_name: Optional[str] = None
+    site_id: Optional[str] = None
+
+    screened_by: Optional[str] = None
+    screening_status: Optional[str] = None
+
+    mother_first_name: Optional[str] = None
+    mother_surname: Optional[str] = None
+    husband_first_name: Optional[str] = None
+    husband_surname: Optional[str] = None
+
+    maternal_uid: Optional[str] = None
+    hospital_admission_number: Optional[str] = None
+
+    gestation_weeks: Optional[int] = None
+    gestation_days: Optional[int] = None
+    gestation_method: Optional[str] = None
+    expected_delivery_date: Optional[str] = None
+
+    exclusion_present: Optional[bool] = None
+    exclusion_reasons: Optional[str] = None
+
+    consent_given: Optional[str] = None
+    consent_taken_by: Optional[str] = None
+    relationship_to_participant: Optional[str] = None
+    relationship_other: Optional[str] = None
+    reason_not_approached: Optional[str] = None
+
+    screening_datetime: Optional[datetime] = None
+    created_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
-
+        from_attributes = True
 
 # ==========================================================
 # FORM B — BIRTH & RESUSCITATION SCHEMAS
