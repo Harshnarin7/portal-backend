@@ -86,7 +86,6 @@ def generate_screening_id(site_id: str):
 @app.post("/import-from-firebase/")
 def import_from_firebase(data: dict, db: Session = Depends(get_db)):
 
-    # 🔥 use SAME screening_id from mobile
     screening_id = data.get("screening_id")
 
     existing = db.query(Screening).filter(
@@ -96,13 +95,42 @@ def import_from_firebase(data: dict, db: Session = Depends(get_db)):
     if existing:
         return {"message": "Already exists"}
 
+    # ✅ GET form_a data
+    form_a = data.get("form_a", {})
+
     new_entry = Screening(
         screening_id=screening_id,
-        enrollment_id=data.get("enrollment_id"),
-        mother_first_name=data.get("mother_first_name"),
-        maternal_uid=data.get("maternal_uid"),
-        site_id=data.get("site_id"),
-        site_name=data.get("site_name"),
+
+        site_name=form_a.get("siteName"),
+        site_id=form_a.get("siteId"),
+
+        screened_by=form_a.get("screenedBy"),
+
+        mother_first_name=form_a.get("motherFirstName"),
+        mother_surname=form_a.get("motherSurname"),
+
+        husband_first_name=form_a.get("husbandFirstName"),
+        husband_surname=form_a.get("husbandSurname"),
+
+        maternal_uid=form_a.get("maternalUid"),
+        hospital_admission_number=form_a.get("hospitalAdmissionNumber"),
+
+        gestation_weeks=form_a.get("gestation", {}).get("weeks"),
+        gestation_days=form_a.get("gestation", {}).get("days"),
+
+        expected_delivery_date=form_a.get("edd"),
+
+        exclusion_present=form_a.get("exclusion", {}).get("present"),
+        exclusion_reasons=form_a.get("exclusion", {}).get("reason"),
+
+        consent_given=form_a.get("finalDecision", {}).get("consentStatus"),
+        consent_taken_by=form_a.get("finalDecision", {}).get("consentTakenBy"),
+
+        relationship_to_participant=form_a.get("finalDecision", {}).get("relationshipToParticipant"),
+        relationship_other=form_a.get("finalDecision", {}).get("relationshipOther"),
+
+        reason_not_approached=form_a.get("reasonNotApproached"),
+
         screening_datetime=datetime.now(),
         created_at=datetime.now(),
         screening_status="Pending"
@@ -112,7 +140,6 @@ def import_from_firebase(data: dict, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Imported successfully"}
-
 
 # ----------------------------
 # ROOT endpoint
