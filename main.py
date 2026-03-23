@@ -95,41 +95,39 @@ def import_from_firebase(data: dict, db: Session = Depends(get_db)):
     if existing:
         return {"message": "Already exists"}
 
-    # ✅ GET form_a data
-    form_a = data.get("form_a", {})
+    form_a = data  # ✅ FIXED
 
     new_entry = Screening(
         screening_id=screening_id,
 
-        site_name=form_a.get("siteName"),
-        site_id=form_a.get("siteId"),
+        site_name=form_a.get("site_name"),
+        site_id=form_a.get("site_id"),
+        screened_by=form_a.get("screened_by"),
 
-        screened_by=form_a.get("screenedBy"),
+        mother_first_name=form_a.get("mother_first_name"),
+        mother_surname=form_a.get("mother_surname"),
 
-        mother_first_name=form_a.get("motherFirstName"),
-        mother_surname=form_a.get("motherSurname"),
+        husband_first_name=form_a.get("husband_first_name"),
+        husband_surname=form_a.get("husband_surname"),
 
-        husband_first_name=form_a.get("husbandFirstName"),
-        husband_surname=form_a.get("husbandSurname"),
+        maternal_uid=form_a.get("maternal_uid"),
+        hospital_admission_number=form_a.get("hospital_admission_number"),
 
-        maternal_uid=form_a.get("maternalUid"),
-        hospital_admission_number=form_a.get("hospitalAdmissionNumber"),
+        gestation_weeks=form_a.get("gestation_weeks"),
+        gestation_days=form_a.get("gestation_days"),
 
-        gestation_weeks=form_a.get("gestation", {}).get("weeks"),
-        gestation_days=form_a.get("gestation", {}).get("days"),
+        expected_delivery_date=form_a.get("expected_delivery_date"),
 
-        expected_delivery_date=form_a.get("edd"),
+        exclusion_present=form_a.get("exclusion_present"),
+        exclusion_reasons=form_a.get("exclusion_reasons"),
 
-        exclusion_present=form_a.get("exclusion", {}).get("present"),
-        exclusion_reasons=form_a.get("exclusion", {}).get("reason"),
+        consent_given=form_a.get("consent_given"),
+        consent_taken_by=form_a.get("consent_taken_by"),
 
-        consent_given=form_a.get("finalDecision", {}).get("consentStatus"),
-        consent_taken_by=form_a.get("finalDecision", {}).get("consentTakenBy"),
+        relationship_to_participant=form_a.get("relationship_to_participant"),
+        relationship_other=form_a.get("relationship_other"),
 
-        relationship_to_participant=form_a.get("finalDecision", {}).get("relationshipToParticipant"),
-        relationship_other=form_a.get("finalDecision", {}).get("relationshipOther"),
-
-        reason_not_approached=form_a.get("reasonNotApproached"),
+        reason_not_approached=form_a.get("reason_not_approached"),
 
         screening_datetime=datetime.now(),
         created_at=datetime.now(),
