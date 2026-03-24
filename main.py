@@ -258,11 +258,15 @@ def get_screening(screening_id: str, db: Session = Depends(get_db)):
 # ----------------------------
 # UPDATE screening
 # ----------------------------
-@app.put("/screenings/{id}", response_model=ScreeningOut)
-def update_screening(id: int, updated_data: ScreeningCreate, db: Session = Depends(get_db)):
-    entry = db.query(Screening).filter(Screening.id == id).first()
+@app.put("/screenings/{screening_id}", response_model=ScreeningOut)
+def update_screening(screening_id: str, updated_data: ScreeningCreate, db: Session = Depends(get_db)):
+
+    entry = db.query(Screening).filter(
+        Screening.screening_id == screening_id
+    ).first()
+
     if not entry:
-        raise HTTPException(status_code=404, detail="Screening entry not found")
+        raise HTTPException(status_code=404, detail="Screening not found")
 
     try:
         for key, value in updated_data.model_dump().items():
