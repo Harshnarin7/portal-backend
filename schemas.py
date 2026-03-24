@@ -40,6 +40,7 @@ class LoginResponse(BaseModel):
 # ==========================================================
 
 class ScreeningCreate(BaseModel):
+    screening_id: Optional[str] = None
     screening_datetime: Optional[datetime] = None
     enrollment_id: Optional[str] = None
     site_name: str
