@@ -5,17 +5,32 @@ from datetime import datetime
 import random, string
 from auth import hash_password, verify_password
 from core.security import create_access_token
-from models import Screening, BirthResuscitation, MaternalDetails, PostnatalDay1, NICUAdmission,NeonatalMorbidities,StudyOutcomes,CranialUltrasound,ROPScreening,CompositeOutcome,FiO2AUC,RespCVNeuroLog,InfectGIHemaLog,MetabRenalVascEyeLog,SAEReport, AdverseEvents, SAEList, User, get_db, Base, engine
+from db import Base, engine
+from db import get_db
+import models
+from models import (
+    Screening, BirthResuscitation, MaternalDetails, PostnatalDay1,
+    NICUAdmission, NeonatalMorbidities, StudyOutcomes,
+    CranialUltrasound, ROPScreening, CompositeOutcome,
+    FiO2AUC, RespCVNeuroLog, InfectGIHemaLog,
+    MetabRenalVascEyeLog, SAEReport, AdverseEvents,
+    SAEList, User
+)
 from schemas import ScreeningCreate, ScreeningOut, BirthResuscitationCreate, BirthResuscitationOut, MaternalDetailsCreate, MaternalDetailsOut, PostnatalDay1Create, PostnatalDay1Out,NICUAdmissionCreate,NICUAdmissionOut,NeonatalMorbiditiesCreate,NeonatalMorbiditiesOut,StudyOutcomesCreate, StudyOutcomesOut,CranialUltrasoundCreate, CranialUltrasoundOut,ROPScreeningCreate, ROPScreeningOut,CompositeOutcomeCreate, CompositeOutcomeOut, FiO2AUCLogCreate, FiO2AUCLogOut, RespCVNeuroLogCreate, RespCVNeuroLogOut,InfectGIHemaLogCreate, InfectGIHemaLogOut,MetabRenalVascEyeLogCreate,MetabRenalVascEyeLogOut,SAEReportCreate, SAEReportOut, AdverseEventsCreate, AdverseEventsOut ,SAEListCreate, SAEListOut, UserCreate, UserOut, LoginRequest, LoginResponse
 from pydantic import BaseModel
 from typing import Optional, List
 from deps import get_current_user
 from routers import enrollment
-from models import engine
+
 from sqlalchemy import text
 from db import SessionLocal
 
+from sqlalchemy import text
+from db import engine
 
+with engine.connect() as conn:
+    db_name = conn.execute(text("SELECT current_database()")).scalar()
+    print("👉 CONNECTED DB:", db_name)
 
 # ----------------------------
 # Database initialization
@@ -35,8 +50,8 @@ origins = [
 ]
 SITE_NURSES = {
     "PGIMER": [
-        "Anureet Kaur",
         "Geetika",
+        "Navkiran",
         "Priyanka Thakur",
         "Seemran Kaur",
         "Tanvi Saini",
@@ -217,6 +232,8 @@ def create_screening(screening: ScreeningCreate, db: Session = Depends(get_db)):
 
     maternal_uid=screening.maternal_uid,
     hospital_admission_number=screening.hospital_admission_number,
+    mother_contact=screening.mother_contact,
+    husband_contact=screening.husband_contact,
 
     gestation_weeks=screening.gestation_weeks,
     gestation_days=screening.gestation_days,
@@ -255,9 +272,6 @@ def get_screening(screening_id: str, db: Session = Depends(get_db)):
 
     return entry    
 
-# ----------------------------
-# UPDATE screening
-# ----------------------------
 @app.put("/screenings/{screening_id}", response_model=ScreeningOut)
 def update_screening(screening_id: str, updated_data: ScreeningCreate, db: Session = Depends(get_db)):
 
@@ -269,17 +283,27 @@ def update_screening(screening_id: str, updated_data: ScreeningCreate, db: Sessi
         raise HTTPException(status_code=404, detail="Screening not found")
 
     try:
-        for key, value in updated_data.model_dump().items():
+        # ✅ Only update provided fields
+        update_data = updated_data.model_dump(exclude_unset=True)
+
+        # 🚫 NEVER update screening_id
+        update_data.pop("screening_id", None)
+
+        for key, value in update_data.items():
             setattr(entry, key, value)
 
         db.commit()
         db.refresh(entry)
+
+        # ✅ Safety check
+        if not entry.screening_id:
+            raise HTTPException(status_code=400, detail="Screening ID lost during update")
+
         return entry
 
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=f"Error updating entry: {str(e)}")
-
 # ----------------------------
 # DELETE screening
 # ----------------------------
@@ -353,6 +377,20 @@ def create_birth_resuscitation(
     db.add(entry)
     db.commit()
     db.refresh(entry)
+
+    return entry
+# ----------------------------
+# GET Birth Resuscitation by Screening ID
+# ----------------------------
+@app.get("/birth-resuscitation/{screening_id}")
+def get_birth(screening_id: str, db: Session = Depends(get_db)):
+    
+    entry = db.query(BirthResuscitation).filter(
+        BirthResuscitation.screening_id == screening_id
+    ).first()
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="Not found")
 
     return entry
 @app.get("/birth-resuscitation/{enrollment_id}", response_model=BirthResuscitationOut)
@@ -505,7 +543,15 @@ def create_composite_outcome(
     data: CompositeOutcomeCreate,
     db: Session = Depends(get_db)
 ):
-    record = CompositeOutcome(**data.model_dump())
+    allowed_fields = CompositeOutcome.__table__.columns.keys()
+
+    filtered_data = {
+    key: value
+    for key, value in data.model_dump().items()
+    if key in allowed_fields
+}
+
+    record = CompositeOutcome(**filtered_data)
     db.add(record)
     db.commit()
     db.refresh(record)
@@ -530,7 +576,13 @@ def create_fio2_auc(
     data: FiO2AUCLogCreate,
     db: Session = Depends(get_db)
 ):
-    record = FiO2AUC(**data.model_dump())
+    record = FiO2AUC(
+    enrollment_id=data.enrollment_id,
+    total_auc=data.total_auc,
+    mean_daily_fio2=data.mean_daily_fio2,
+    excess_o2_auc=data.excess_o2_auc,
+    fio2_logs=data.fio2_logs
+)
     db.add(record)
     db.commit()
     db.refresh(record)

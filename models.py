@@ -1,33 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime, Date, JSON
-
-from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy import create_engine
-from datetime import datetime, date
-from sqlalchemy.sql import func
-
-# ----------------------------
-# Database setup
-# ----------------------------
-DATABASE_URL = "sqlite:///./portal_trial_v2.db"
-
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False}
-)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime, Date, JSON, Time
+from datetime import datetime
+from db import Base   
+from sqlalchemy import Time# 🔥 THIS IS THE FIX
 
 
-# ----------------------------
-# DB dependency
-# ----------------------------
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 class User(Base):
     __tablename__ = "users"
@@ -67,6 +43,8 @@ class Screening(Base):
 
     maternal_uid = Column(String)
     hospital_admission_number = Column(String)
+    mother_contact = Column(String(10), nullable=True)
+    husband_contact = Column(String(10), nullable=True)
 
     gestation_weeks = Column(Integer)
     gestation_days = Column(Integer)
@@ -103,7 +81,7 @@ class BirthResuscitation(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     screening_id = Column(String, index=True)
-    enrollment_id = Column(String)
+    enrollment_id = Column(String, unique=True, index=True)
 
     mother_name_first = Column(String)
     mother_name_surname = Column(String)
@@ -113,14 +91,13 @@ class BirthResuscitation(Base):
     contact_mother = Column(String)
     contact_husband = Column(String)
     date_of_birth = Column(Date)
-    time_of_birth = Column(String)
+    time_of_birth = Column(Time)
     baby_admission_no = Column(String)
 
     gestation_weeks = Column(Integer)
     gestation_days = Column(Integer)
     birth_weight = Column(Float)
-    contact_mother = Column(String)
-    contact_husband = Column(String)
+    
     indication_for_delivery = Column(String)
     maternal_complication = Column(String)
     delivery_mode = Column(String)
@@ -151,15 +128,16 @@ class BirthResuscitation(Base):
     time_to_respiration = Column(Integer)
     time_to_spo2_80 = Column(Integer)
     spo2_5min = Column(Integer)
+    time_to_spo2_80 = Column(Integer, nullable=True)
 
     randomised = Column(Boolean)
     randomisation_date = Column(String)
     resus_failure = Column(Boolean)
 
     fio2_exit = Column(Float)
-    reason_exit_trial_gas = Column(String)
+    reason_exit_trial_gas = Column(String, nullable=True)
     spo2_exit_trial_gas = Column(Float)
-    total_resus_time = Column(Float)
+    total_resus_time = Column(Integer, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     
@@ -320,6 +298,7 @@ class PostnatalDay1(Base):
     surfactant_dose = Column(Float, nullable=True)
     adverse_effects = Column(Boolean, nullable=True)
     adverse_type = Column(String, nullable=True)
+    mode_of_support = Column(String, nullable=True)
 
     # EARLY RESPIRATORY SUPPORT
     early_cpap = Column(Boolean, nullable=True)
@@ -374,10 +353,6 @@ class NICUAdmission(Base):
     completion_date = Column(Date)
 
 
-# ----------------------------
-# Create tables
-# ----------------------------
-Base.metadata.create_all(bind=engine)
 
 # ==========================================================
 # FORM F — NEONATAL MORBIDITIES MODEL

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 from typing import Optional,List, Dict
-from datetime import datetime,date
+from datetime import datetime,date, time
 # =========================
 # USER AUTH SCHEMAS
 # =========================
@@ -51,7 +51,8 @@ class ScreeningCreate(BaseModel):
     mother_surname: Optional[str] = None
     husband_first_name: str
     husband_surname: Optional[str] = None
-
+    mother_contact: Optional[str] = None
+    husband_contact: Optional[str] = None
     maternal_uid: Optional[str] = None
     hospital_admission_number: Optional[str] = None
 
@@ -85,6 +86,8 @@ class ScreeningOut(BaseModel):
     mother_surname: Optional[str] = None
     husband_first_name: Optional[str] = None
     husband_surname: Optional[str] = None
+    mother_contact: Optional[str] = None
+    husband_contact: Optional[str] = None
 
     maternal_uid: Optional[str] = None
     hospital_admission_number: Optional[str] = None
@@ -128,6 +131,8 @@ class BirthResuscitationCreate(BaseModel):
     gestation_weeks: Optional[int] = None
     gestation_days: Optional[int] = None
     birth_weight: Optional[float] = None
+    date_of_birth: Optional[date] = None
+    time_of_birth: Optional[time] = None
 
     indication_for_delivery: Optional[str] = None
     maternal_complication: Optional[str] = None
@@ -159,6 +164,7 @@ class BirthResuscitationCreate(BaseModel):
     time_to_respiration: Optional[int] = None
     time_to_spo2_80: Optional[int] = None
     spo2_5min: Optional[int] = None
+    time_to_spo2_80: Optional[int] = None
 
     randomised: Optional[bool] = None
     randomisation_date: Optional[str] = None
@@ -167,7 +173,7 @@ class BirthResuscitationCreate(BaseModel):
     fio2_exit: Optional[float] = None
     reason_exit_trial_gas: Optional[str] = None
     spo2_exit_trial_gas: Optional[float] = None
-    total_resus_time: Optional[float] = None
+    total_resus_time: Optional[int] = None
 
     # =====================================================
     # 🔐 VALIDATORS (MUST BE INSIDE CLASS)
@@ -345,6 +351,7 @@ class PostnatalDay1Create(BaseModel):
     surfactant_dose: float | None = None
     adverse_effects: bool | None = None
     adverse_type: str | None = None
+    mode_of_support: Optional[str] = None
 
     early_cpap: bool | None = None
     humidified_gas: bool | None = None
