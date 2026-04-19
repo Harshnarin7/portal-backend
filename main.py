@@ -51,7 +51,7 @@ origins = [
 SITE_NURSES = {
     "PGIMER": [
         "Geetika",
-        "Navkiran",
+        "Navkiran Kaur",
         "Priyanka Thakur",
         "Seemran Kaur",
         "Tanvi Saini",
@@ -405,7 +405,36 @@ def get_birth_resuscitation(enrollment_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Birth Resuscitation not found")
 
     return entry    
+@app.put("/birth-resuscitation/{enrollment_id}", response_model=BirthResuscitationOut)
+def update_birth_resuscitation(
+    enrollment_id: str,
+    updated_data: BirthResuscitationCreate,
+    db: Session = Depends(get_db)
+):
+    entry = db.query(BirthResuscitation).filter(
+        BirthResuscitation.enrollment_id == enrollment_id
+    ).first()
 
+    if not entry:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    try:
+        update_data = updated_data.model_dump(exclude_unset=True)
+
+        # ❌ don't update enrollment_id
+        update_data.pop("enrollment_id", None)
+
+        for key, value in update_data.items():
+            setattr(entry, key, value)
+
+        db.commit()
+        db.refresh(entry)
+
+        return entry
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
 @app.post("/maternal-details/", response_model=MaternalDetailsOut)
 def create_maternal_details(
     data: MaternalDetailsCreate,
