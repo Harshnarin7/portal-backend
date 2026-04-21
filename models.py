@@ -50,7 +50,7 @@ class Screening(Base):
     gestation_days = Column(Integer)
     gestation_method = Column(String)
     expected_delivery_date = Column(String)
-
+    lmp_date = Column(String)
     inclusion_gest_lt_32 = Column(Boolean)
     anticipated_dr_resus = Column(Boolean)
 

@@ -382,17 +382,7 @@ def create_birth_resuscitation(
 # ----------------------------
 # GET Birth Resuscitation by Screening ID
 # ----------------------------
-@app.get("/birth-resuscitation/{screening_id}")
-def get_birth(screening_id: str, db: Session = Depends(get_db)):
-    
-    entry = db.query(BirthResuscitation).filter(
-        BirthResuscitation.screening_id == screening_id
-    ).first()
 
-    if not entry:
-        raise HTTPException(status_code=404, detail="Not found")
-
-    return entry
 @app.get("/birth-resuscitation/{enrollment_id}", response_model=BirthResuscitationOut)
 def get_birth_resuscitation(enrollment_id: str, db: Session = Depends(get_db)):
     entry = (

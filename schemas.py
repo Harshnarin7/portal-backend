@@ -55,12 +55,12 @@ class ScreeningCreate(BaseModel):
     husband_contact: Optional[str] = None
     maternal_uid: Optional[str] = None
     hospital_admission_number: Optional[str] = None
-
+    
     gestation_weeks: int
     gestation_days: int
     gestation_method: Optional[str] = None
     expected_delivery_date: Optional[date] = None
-
+    lmp_date: Optional[date] = None 
     exclusion_present: bool
     exclusion_reasons: Optional[str] = None
     screening_status: Optional[str] = None
@@ -96,7 +96,7 @@ class ScreeningOut(BaseModel):
     gestation_days: Optional[int] = None
     gestation_method: Optional[str] = None
     expected_delivery_date: Optional[str] = None
-
+    lmp_date: Optional[str] = None
     exclusion_present: Optional[bool] = None
     exclusion_reasons: Optional[str] = None
 
