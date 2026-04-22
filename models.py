@@ -226,7 +226,7 @@ class MaternalDetails(Base):
     aph = Column(String)
     aph_type = Column(String)
     aph_other = Column(String)
-
+    isoimmunization = Column(String, nullable=True)
     # ---------- EVIDENCE OF INFECTION ----------
     pprom = Column(String)
     pprom_duration = Column(String)

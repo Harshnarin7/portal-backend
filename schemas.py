@@ -282,7 +282,7 @@ class MaternalDetailsCreate(BaseModel):
     aph: Optional[bool] = None
     aph_type: Optional[str] = None
     aph_other: Optional[str] = None
-
+    isoimmunization: Optional[str] = None
     pprom: Optional[bool] = None
     pprom_duration: Optional[int] = None
     preterm_labor: Optional[bool] = None
