@@ -56,12 +56,16 @@ SITE_NURSES = {
         "Seemran Kaur",
         "Tanvi Saini",
         "Yashvi Jolly",
-        "Mannat Guliani",
-        "Shalini Dhiman"
+        "Dr. Mannat Guliani",
+        "Dr. Shalini Dhiman"
     ],
     "GMCH": [
-        "Seemran Kaur",
-        "Tanvi Saini"
+        "Anosh",
+        "Arushu",
+        "Arzoo",
+        "Muskan",
+        "Vanika",
+        "Dr. Manpreet Kaur"
     ],
     "IOG": [
         "Yashvi Jolly"
